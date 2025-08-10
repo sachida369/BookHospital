@@ -1,0 +1,146 @@
+<div class="container py-4">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="/search">
+                        <div class="mb-3">
+                            <label class="form-label">Hospital Name</label>
+                            <input type="text" class="form-control" name="name" value="<%= filters.name || '' %>" placeholder="Enter hospital name">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location" value="<%= filters.location || '' %>" placeholder="Enter location">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Disease Type</label>
+                            <select class="form-select filter-select" name="diseaseType">
+                                <option value="">Any Specialty</option>
+                                <% diseaseTypes.forEach(disease => { %>
+                                    <option value="<%= disease %>" <%= filters.diseaseType === disease ? 'selected' : '' %>>
+                                        <%= disease %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Bed Type</label>
+                            <select class="form-select filter-select" name="bedType">
+                                <option value="">Any Type</option>
+                                <% bedTypes.forEach(bedType => { %>
+                                    <option value="<%= bedType %>" <%= filters.bedType === bedType ? 'selected' : '' %>>
+                                        <%= bedType %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Minimum Rating</label>
+                            <select class="form-select filter-select" name="minRating">
+                                <option value="">Any Rating</option>
+                                <option value="4.5" <%= filters.minRating === '4.5' ? 'selected' : '' %>>4.5+ Stars</option>
+                                <option value="4.0" <%= filters.minRating === '4.0' ? 'selected' : '' %>>4.0+ Stars</option>
+                                <option value="3.5" <%= filters.minRating === '3.5' ? 'selected' : '' %>>3.5+ Stars</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Maximum Fee ($)</label>
+                            <input type="number" class="form-control" name="maxFees" value="<%= filters.maxFees || '' %>" placeholder="Enter max fee">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Facilities</label>
+                            <% facilities.forEach((facility, index) => { %>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="facilities" value="<%= facility %>" 
+                                           id="facility_<%= index %>" <%= (filters.facilities && filters.facilities.includes(facility)) ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="facility_<%= index %>">
+                                        <%= facility %>
+                                    </label>
+                                </div>
+                            <% }); %>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i>Apply Filters
+                            </button>
+                            <a href="/search" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>Clear All
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search Results -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Search Results</h2>
+                <span class="text-muted"><%= hospitals.length %> hospital(s) found</span>
+            </div>
+            
+            <% if (hospitals.length > 0) { %>
+                <div class="row g-4">
+                    <% hospitals.forEach(hospital => { %>
+                        <div class="col-md-6 col-xl-4">
+                            <div class="card h-100 shadow-sm hospital-card">
+                                <img src="<%= hospital.imageUrl %>" class="card-img-top" alt="<%= hospital.name %>" style="height: 180px; object-fit: cover;">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title"><%= hospital.name %></h5>
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-1"></i><%= hospital.location %>
+                                    </p>
+                                    <p class="card-text flex-grow-1 small"><%= hospital.description.substring(0, 80) %>...</p>
+                                    
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="badge bg-primary">
+                                                <i class="fas fa-star me-1"></i><%= hospital.doctorRating %>
+                                            </span>
+                                            <span class="badge bg-success"><%= hospital.successRate %>%</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <small class="text-muted">Fee: $<%= hospital.consultationFee %></small>
+                                            <small class="text-success">
+                                                <%= getTotalBeds(hospital.availableBeds) %> beds
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-1">
+                                        <a href="/hospital/<%= hospital.id %>" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-info-circle me-1"></i>Details
+                                        </a>
+                                        <a href="/book/<%= hospital.id %>" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-calendar-plus me-1"></i>Book Bed
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <i class="fas fa-search display-4 text-muted mb-3"></i>
+                    <h4>No hospitals found</h4>
+                    <p class="text-muted">Try adjusting your search criteria or clear some filters.</p>
+                    <a href="/search" class="btn btn-primary">
+                        <i class="fas fa-times me-1"></i>Clear Filters
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

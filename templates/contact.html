@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Contact Us</h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            Have questions about our platform or need help finding the right hospital? We're here to help you 24/7.
+        </p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Contact Form -->
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+            
+            <form method="POST" class="space-y-6">
+                {{ form.hidden_tag() }}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        {{ form.name.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                        {{ form.name(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", placeholder="Your full name") }}
+                        {% if form.name.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ form.name.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        {{ form.email.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                        {{ form.email(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", placeholder="your.email@example.com") }}
+                        {% if form.email.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ form.email.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    {{ form.subject.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.subject(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", placeholder="Brief subject of your message") }}
+                    {% if form.subject.errors %}
+                        <div class="text-red-500 text-sm mt-1">{{ form.subject.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    {{ form.message.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                    {{ form.message(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", rows="6", placeholder="Please describe how we can help you...") }}
+                    {% if form.message.errors %}
+                        <div class="text-red-500 text-sm mt-1">{{ form.message.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-medical-blue text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                    <i class="fas fa-paper-plane mr-2"></i>Send Message
+                </button>
+            </form>
+        </div>
+        
+        <!-- Contact Information -->
+        <div class="space-y-8">
+            <!-- Emergency Notice -->
+            <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-bold text-red-900">Medical Emergency?</h3>
+                </div>
+                <p class="text-red-800 mb-4">
+                    If you're experiencing a medical emergency, please don't use this form. 
+                    Call 911 immediately or go to your nearest emergency room.
+                </p>
+                <a href="tel:911" 
+                   class="inline-block bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-medium">
+                    <i class="fas fa-phone mr-2"></i>Call 911
+                </a>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Get in Touch</h3>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-medical-blue rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-phone text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-medium text-gray-900">Phone Support</h4>
+                            <p class="text-gray-600 mt-1">Available 24/7 for hospital bookings</p>
+                            <a href="tel:+1-800-HOSPITAL" 
+                               class="text-medical-blue hover:text-blue-700 font-medium">
+                                +1-800-HOSPITAL (467-7482)
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-medical-green rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-envelope text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-medium text-gray-900">Email Support</h4>
+                            <p class="text-gray-600 mt-1">We'll respond within 24 hours</p>
+                            <a href="mailto:info@hospitalfinder.com" 
+                               class="text-medical-blue hover:text-blue-700 font-medium">
+                                info@hospitalfinder.com
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-clock text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-medium text-gray-900">Support Hours</h4>
+                            <p class="text-gray-600 mt-1">
+                                Phone: 24/7<br>
+                                Email: 24/7<br>
+                                Live Chat: 6 AM - 10 PM EST
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-map-marker-alt text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-medium text-gray-900">Office Address</h4>
+                            <p class="text-gray-600 mt-1">
+                                123 Healthcare Ave<br>
+                                Medical District, NY 10001<br>
+                                United States
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ -->
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">How quickly can I book a hospital bed?</h4>
+                        <p class="text-gray-600 text-sm">Most bookings are confirmed within 2-4 hours. Emergency cases are prioritized and processed immediately.</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">Is the booking service free?</h4>
+                        <p class="text-gray-600 text-sm">Yes, our booking platform is completely free. You only pay the hospital's standard fees.</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">Do you work with insurance companies?</h4>
+                        <p class="text-gray-600 text-sm">We partner with hospitals that accept most major insurance plans. Check with the specific hospital for coverage details.</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">Can I cancel my booking?</h4>
+                        <p class="text-gray-600 text-sm">Yes, you can cancel your booking up to 2 hours before your scheduled admission without penalty.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <a href="{{ url_for('blog') }}" 
+                       class="text-medical-blue hover:text-blue-700 font-medium">
+                        Visit our blog for more healthcare guides <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

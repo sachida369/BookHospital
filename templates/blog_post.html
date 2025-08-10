@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Article Header -->
+    <header class="mb-8">
+        <div class="mb-4">
+            <a href="{{ url_for('blog') }}" 
+               class="text-medical-blue hover:text-blue-700 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Blog
+            </a>
+        </div>
+        
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{{ post.title }}</h1>
+        
+        <div class="flex items-center justify-between border-b border-gray-200 pb-6">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-medical-blue rounded-full flex items-center justify-center">
+                    <i class="fas fa-user-md text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <div class="font-medium text-gray-900">{{ post.author }}</div>
+                    <div class="text-sm text-gray-500">{{ post.published_at.strftime('%B %d, %Y') }}</div>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <div class="flex items-center">
+                    <i class="fas fa-clock mr-1"></i>
+                    <span>5 min read</span>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <button class="hover:text-medical-blue transition-colors" title="Share on Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </button>
+                    <button class="hover:text-medical-blue transition-colors" title="Share on Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                    <button class="hover:text-medical-blue transition-colors" title="Share on LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Article Content -->
+    <div class="prose prose-lg max-w-none">
+        {{ post.content | safe }}
+    </div>
+    
+    <!-- Article Footer -->
+    <footer class="mt-12 pt-8 border-t border-gray-200">
+        <div class="bg-gray-50 rounded-lg p-6">
+            <div class="flex items-center">
+                <div class="w-16 h-16 bg-medical-blue rounded-full flex items-center justify-center">
+                    <i class="fas fa-user-md text-white text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-bold text-gray-900">{{ post.author }}</h3>
+                    <p class="text-gray-600">Healthcare expert and medical writer specializing in hospital care and patient advocacy.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Articles -->
+        <div class="mt-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">Related Articles</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <h4 class="font-bold text-gray-900 mb-2 hover:text-medical-blue transition-colors">
+                        <a href="{{ url_for('blog_post', slug='understanding-hospital-bed-types') }}">
+                            Understanding Hospital Bed Types: ICU, General, and Private
+                        </a>
+                    </h4>
+                    <p class="text-gray-600 text-sm mb-3">Learn about the differences between ICU, general, and private hospital beds to make the best choice for your medical needs.</p>
+                    <div class="text-xs text-gray-500">{{ post.published_at.strftime('%B %d, %Y') }}</div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <h4 class="font-bold text-gray-900 mb-2 hover:text-medical-blue transition-colors">
+                        <a href="#">Emergency Room vs Urgent Care: When to Go Where</a>
+                    </h4>
+                    <p class="text-gray-600 text-sm mb-3">Understanding when to visit the emergency room versus urgent care can save you time and money while ensuring proper care.</p>
+                    <div class="text-xs text-gray-500">Coming Soon</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call to Action -->
+        <div class="mt-8 bg-gradient-to-r from-medical-blue to-blue-600 rounded-lg p-6 text-white text-center">
+            <h3 class="text-xl font-bold mb-3">Need to Find a Hospital?</h3>
+            <p class="mb-4 text-blue-100">Use our hospital finder to locate the best medical facilities near you.</p>
+            <a href="{{ url_for('search') }}" 
+               class="inline-block bg-white text-medical-blue px-6 py-2 rounded-md hover:bg-gray-100 transition-colors font-medium">
+                Search Hospitals Now
+            </a>
+        </div>
+    </footer>
+</article>
+{% endblock %}
+
+{% block scripts %}
+<style>
+    .prose {
+        color: #374151;
+        line-height: 1.75;
+    }
+    
+    .prose h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .prose h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #111827;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .prose p {
+        margin-bottom: 1.25rem;
+    }
+    
+    .prose ul, .prose ol {
+        margin-bottom: 1.25rem;
+        padding-left: 1.5rem;
+    }
+    
+    .prose li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .prose strong {
+        font-weight: 600;
+        color: #111827;
+    }
+    
+    .prose a {
+        color: #1e40af;
+        text-decoration: underline;
+    }
+    
+    .prose a:hover {
+        color: #1d4ed8;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Hospital Info Header -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Book Bed at {{ hospital.name }}</h1>
+                <div class="flex items-center text-gray-600">
+                    <i class="fas fa-map-marker-alt mr-2 text-medical-blue"></i>
+                    <span>{{ hospital.city }}, {{ hospital.state }}</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="flex items-center mb-1">
+                    {% for i in range(5) %}
+                        <i class="fas fa-star {% if i < hospital.doctor_rating %}rating-stars{% else %}text-gray-300{% endif %} text-sm"></i>
+                    {% endfor %}
+                    <span class="text-sm text-gray-600 ml-1">{{ hospital.doctor_rating }}</span>
+                </div>
+                <div class="text-2xl font-bold text-medical-blue">${{ hospital.consultation_fee }}</div>
+                <div class="text-sm text-gray-500">Consultation Fee</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Booking Form -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Patient Information</h2>
+                
+                <form method="POST" class="space-y-6">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            {{ form.patient_name.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                            {{ form.patient_name(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", placeholder="Enter full name") }}
+                            {% if form.patient_name.errors %}
+                                <div class="text-red-500 text-sm mt-1">{{ form.patient_name.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            {{ form.patient_age.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                            {{ form.patient_age(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", placeholder="Enter age") }}
+                            {% if form.patient_age.errors %}
+                                <div class="text-red-500 text-sm mt-1">{{ form.patient_age.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            {{ form.patient_phone.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                            {{ form.patient_phone(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", placeholder="Enter phone number") }}
+                            {% if form.patient_phone.errors %}
+                                <div class="text-red-500 text-sm mt-1">{{ form.patient_phone.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            {{ form.patient_email.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                            {{ form.patient_email(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", placeholder="Enter email address") }}
+                            {% if form.patient_email.errors %}
+                                <div class="text-red-500 text-sm mt-1">{{ form.patient_email.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            {{ form.bed_type.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                            {{ form.bed_type(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue") }}
+                            {% if form.bed_type.errors %}
+                                <div class="text-red-500 text-sm mt-1">{{ form.bed_type.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            {{ form.medical_condition.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                            {{ form.medical_condition(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", placeholder="Brief description of condition") }}
+                            {% if form.medical_condition.errors %}
+                                <div class="text-red-500 text-sm mt-1">{{ form.medical_condition.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        {{ form.emergency_contact.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                        {{ form.emergency_contact(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", placeholder="Emergency contact phone number") }}
+                        {% if form.emergency_contact.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ form.emergency_contact.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        {{ form.special_requirements.label(class="block text-sm font-medium text-gray-700 mb-2") }}
+                        {{ form.special_requirements(class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue", rows="4", placeholder="Any special requirements or notes") }}
+                        {% if form.special_requirements.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ form.special_requirements.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="border-t border-gray-200 pt-6">
+                        <div class="flex justify-between items-center">
+                            <a href="{{ url_for('hospital_detail', id=hospital.id) }}" 
+                               class="text-gray-600 hover:text-gray-800 transition-colors">
+                                <i class="fas fa-arrow-left mr-2"></i>Back to Hospital Details
+                            </a>
+                            
+                            <button type="submit" 
+                                    class="bg-medical-blue text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium">
+                                <i class="fas fa-calendar-plus mr-2"></i>Submit Booking Request
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Booking Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Booking Summary</h3>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Hospital:</span>
+                        <span class="font-medium">{{ hospital.name }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Location:</span>
+                        <span class="font-medium">{{ hospital.city }}, {{ hospital.state }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Rating:</span>
+                        <div class="flex items-center">
+                            {% for i in range(5) %}
+                                <i class="fas fa-star {% if i < hospital.doctor_rating %}rating-stars{% else %}text-gray-300{% endif %} text-xs"></i>
+                            {% endfor %}
+                            <span class="text-sm text-gray-600 ml-1">{{ hospital.doctor_rating }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Success Rate:</span>
+                        <span class="font-medium text-medical-green">{{ hospital.success_rate }}%</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Consultation Fee:</span>
+                        <span class="font-medium text-medical-blue">${{ hospital.consultation_fee }}</span>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-4 mb-6">
+                    <h4 class="font-medium text-gray-900 mb-3">Available Bed Types:</h4>
+                    <div class="space-y-2">
+                        {% for bed_type, count in hospital.get_available_beds().items() %}
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">{{ bed_type }}:</span>
+                            <span class="{% if count > 0 %}text-medical-green{% else %}text-red-500{% endif %} font-medium">
+                                {{ count }} available
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="flex items-start">
+                        <i class="fas fa-info-circle text-medical-blue mt-1 mr-3"></i>
+                        <div class="text-sm text-blue-800">
+                            <p class="font-medium mb-1">Important Notes:</p>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>Booking confirmation may take 2-4 hours</li>
+                                <li>You will receive SMS and email updates</li>
+                                <li>Please arrive 30 minutes early</li>
+                                <li>Bring valid ID and insurance card</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-4 bg-green-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-shield-alt text-medical-green mr-2"></i>
+                        <span class="text-sm text-green-800 font-medium">Secure & Confidential</span>
+                    </div>
+                    <p class="text-xs text-green-700 mt-1">Your information is protected with 256-bit encryption</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

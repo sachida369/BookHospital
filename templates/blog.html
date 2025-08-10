@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Blog Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Healthcare Blog</h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            Stay informed with the latest healthcare news, hospital guides, and medical advice from our expert team.
+        </p>
+    </div>
+    
+    <!-- Featured Posts -->
+    {% if posts %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+        {% for post in posts[:3] %}
+        <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-medical-blue rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-md text-white"></i>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-sm font-medium text-gray-900">{{ post.author }}</div>
+                        <div class="text-xs text-gray-500">{{ post.published_at.strftime('%B %d, %Y') }}</div>
+                    </div>
+                </div>
+                
+                <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-medical-blue transition-colors">
+                    <a href="{{ url_for('blog_post', slug=post.slug) }}">{{ post.title }}</a>
+                </h2>
+                
+                <p class="text-gray-600 mb-4 line-clamp-3">{{ post.excerpt }}</p>
+                
+                <div class="flex justify-between items-center">
+                    <a href="{{ url_for('blog_post', slug=post.slug) }}" 
+                       class="text-medical-blue hover:text-blue-700 font-medium text-sm transition-colors">
+                        Read More <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                    
+                    <div class="flex items-center text-xs text-gray-500">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span>5 min read</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    
+    <!-- All Posts -->
+    <div class="border-t border-gray-200 pt-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8">All Articles</h2>
+        
+        <div class="space-y-8">
+            {% for post in posts %}
+            <article class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 bg-medical-blue rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-md text-white text-sm"></i>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">{{ post.author }}</div>
+                                <div class="text-xs text-gray-500">{{ post.published_at.strftime('%B %d, %Y') }}</div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-medical-blue transition-colors">
+                            <a href="{{ url_for('blog_post', slug=post.slug) }}">{{ post.title }}</a>
+                        </h3>
+                        
+                        <p class="text-gray-600 mb-4">{{ post.excerpt }}</p>
+                        
+                        <div class="flex items-center justify-between">
+                            <a href="{{ url_for('blog_post', slug=post.slug) }}" 
+                               class="text-medical-blue hover:text-blue-700 font-medium transition-colors">
+                                Read Full Article <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                            
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span>5 min read</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+    
+    {% else %}
+    <!-- No Posts State -->
+    <div class="text-center py-12">
+        <i class="fas fa-newspaper text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-xl font-medium text-gray-900 mb-2">No articles yet</h3>
+        <p class="text-gray-600">Check back soon for healthcare news and insights.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Newsletter Signup -->
+    <div class="mt-16 bg-gradient-to-r from-medical-blue to-blue-600 rounded-lg p-8 text-white text-center">
+        <h3 class="text-2xl font-bold mb-4">Stay Updated</h3>
+        <p class="mb-6 text-blue-100">Subscribe to our newsletter for the latest healthcare news and hospital guides.</p>
+        
+        <form class="max-w-md mx-auto flex gap-3">
+            <input type="email" placeholder="Enter your email" 
+                   class="flex-1 px-4 py-2 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-white">
+            <button type="submit" 
+                    class="bg-white text-medical-blue px-6 py-2 rounded-md hover:bg-gray-100 transition-colors font-medium">
+                Subscribe
+            </button>
+        </form>
+        
+        <p class="text-xs text-blue-200 mt-3">We respect your privacy. Unsubscribe at any time.</p>
+    </div>
+</div>
+{% endblock %}

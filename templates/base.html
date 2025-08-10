@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title or 'Hospital Finder - Find & Book Hospital Beds Online' }}</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{{ meta_description or 'Find and book hospital beds online. Search by specialty, location, and availability across top-rated hospitals nationwide.' }}">
+    <meta name="keywords" content="hospital finder, book hospital beds, medical care, healthcare, hospital search, {{ keywords or '' }}">
+    <meta name="author" content="Hospital Finder">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{{ title or 'Hospital Finder' }}">
+    <meta property="og:description" content="{{ meta_description or 'Find and book hospital beds online with our comprehensive platform.' }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:site_name" content="Hospital Finder">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ title or 'Hospital Finder' }}">
+    <meta name="twitter:description" content="{{ meta_description or 'Find and book hospital beds online.' }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.url }}">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#1e40af',
+                        'medical-green': '#059669',
+                        'medical-red': '#dc2626'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        }
+        .hospital-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hospital-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .rating-stars {
+            color: #fbbf24;
+        }
+    </style>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Hospital Finder",
+        "description": "Find and book hospital beds online",
+        "url": "{{ request.url_root }}",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ url_for('search') }}?city={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="flex items-center space-x-2">
+                        <i class="fas fa-hospital-alt text-2xl text-medical-blue"></i>
+                        <span class="text-xl font-bold text-gray-900">Hospital Finder</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{{ url_for('index') }}" class="text-gray-700 hover:text-medical-blue transition-colors">Home</a>
+                    <a href="{{ url_for('search') }}" class="text-gray-700 hover:text-medical-blue transition-colors">Search</a>
+                    <a href="{{ url_for('blog') }}" class="text-gray-700 hover:text-medical-blue transition-colors">Blog</a>
+                    <a href="{{ url_for('contact') }}" class="text-gray-700 hover:text-medical-blue transition-colors">Contact</a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="mobile-menu-button text-gray-700 hover:text-medical-blue">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div class="mobile-menu hidden md:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{{ url_for('index') }}" class="block px-3 py-2 text-gray-700">Home</a>
+                <a href="{{ url_for('search') }}" class="block px-3 py-2 text-gray-700">Search</a>
+                <a href="{{ url_for('blog') }}" class="block px-3 py-2 text-gray-700">Blog</a>
+                <a href="{{ url_for('contact') }}" class="block px-3 py-2 text-gray-700">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                {% for category, message in messages %}
+                    <div class="{% if category == 'success' %}bg-green-100 border-green-500 text-green-700{% elif category == 'error' %}bg-red-100 border-red-500 text-red-700{% else %}bg-blue-100 border-blue-500 text-blue-700{% endif %} border-l-4 p-4 mb-4 rounded">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas {% if category == 'success' %}fa-check-circle{% elif category == 'error' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm">{{ message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-hospital-alt text-2xl text-medical-blue"></i>
+                        <span class="text-xl font-bold">Hospital Finder</span>
+                    </div>
+                    <p class="text-gray-300 mb-4">Your trusted platform for finding and booking hospital beds online. We connect patients with quality healthcare facilities nationwide.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('index') }}" class="text-gray-300 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="{{ url_for('search') }}" class="text-gray-300 hover:text-white transition-colors">Search Hospitals</a></li>
+                        <li><a href="{{ url_for('blog') }}" class="text-gray-300 hover:text-white transition-colors">Healthcare Blog</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="text-gray-300 hover:text-white transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-phone text-medical-blue"></i>
+                            <span>+1-800-HOSPITAL</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-envelope text-medical-blue"></i>
+                            <span>info@hospitalfinder.com</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-clock text-medical-blue"></i>
+                            <span>24/7 Support</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+                <p>&copy; 2025 Hospital Finder. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-button').addEventListener('click', function() {
+            document.querySelector('.mobile-menu').classList.toggle('hidden');
+        });
+        
+        // Auto-hide flash messages
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('[class*="bg-green-100"], [class*="bg-red-100"], [class*="bg-blue-100"]');
+            alerts.forEach(function(alert) {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);
+            });
+        }, 5000);
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

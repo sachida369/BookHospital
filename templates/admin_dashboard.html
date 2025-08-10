@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Hospital.com{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h1>
+        <div>
+            <span class="text-muted">Welcome, Admin</span>
+            <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger ms-3">
+                <i class="fas fa-sign-out-alt me-1"></i>Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-hospital display-4 text-primary mb-3"></i>
+                    <h3 class="text-primary">{{ total_hospitals }}</h3>
+                    <p class="text-muted mb-0">Total Hospitals</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-calendar-check display-4 text-success mb-3"></i>
+                    <h3 class="text-success">{{ total_bookings }}</h3>
+                    <p class="text-muted mb-0">Total Bookings</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-clock display-4 text-warning mb-3"></i>
+                    <h3 class="text-warning">{{ pending_bookings }}</h3>
+                    <p class="text-muted mb-0">Pending Bookings</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Tabs -->
+    <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab">
+                <i class="fas fa-calendar-alt me-1"></i>Bookings Management
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="hospitals-tab" data-bs-toggle="tab" data-bs-target="#hospitals" type="button" role="tab">
+                <i class="fas fa-hospital me-1"></i>Hospitals Management
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content mt-4" id="dashboardTabsContent">
+        <!-- Bookings Management Tab -->
+        <div class="tab-pane fade show active" id="bookings" role="tabpanel">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Bookings</h5>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="filterBookings('all')">All</button>
+                        <button class="btn btn-sm btn-outline-warning" onclick="filterBookings('pending')">Pending</button>
+                        <button class="btn btn-sm btn-outline-success" onclick="filterBookings('confirmed')">Confirmed</button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="filterBookings('cancelled')">Cancelled</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if bookings %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Patient</th>
+                                        <th>Hospital</th>
+                                        <th>Bed Type</th>
+                                        <th>Disease</th>
+                                        <th>Contact</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for booking in bookings %}
+                                        {% set hospital = hospitals|selectattr("id", "equalto", booking.hospital_id)|first %}
+                                        <tr class="booking-row" data-status="{{ booking.status }}">
+                                            <td><strong>#{{ booking.id }}</strong></td>
+                                            <td>
+                                                <div>{{ booking.patient_name }}</div>
+                                                <small class="text-muted">Age: {{ booking.patient_age }}</small>
+                                            </td>
+                                            <td>
+                                                {{ hospital.name if hospital else 'Unknown' }}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ booking.bed_type }}</span>
+                                            </td>
+                                            <td>{{ booking.disease_type }}</td>
+                                            <td>
+                                                <div>{{ booking.patient_phone }}</div>
+                                                <small class="text-muted">{{ booking.patient_email }}</small>
+                                            </td>
+                                            <td>
+                                                <small>{{ booking.booking_date[:10] }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{% if booking.status == 'pending' %}warning{% elif booking.status == 'confirmed' %}success{% else %}danger{% endif %}">
+                                                    {{ booking.status.title() }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if booking.status == 'pending' %}
+                                                    <div class="btn-group btn-group-sm">
+                                                        <a href="{{ url_for('update_booking_status', booking_id=booking.id, status='confirmed') }}" 
+                                                           class="btn btn-success" onclick="return confirm('Confirm this booking?')">
+                                                            <i class="fas fa-check"></i>
+                                                        </a>
+                                                        <a href="{{ url_for('update_booking_status', booking_id=booking.id, status='cancelled') }}" 
+                                                           class="btn btn-danger" onclick="return confirm('Cancel this booking?')">
+                                                            <i class="fas fa-times"></i>
+                                                        </a>
+                                                    </div>
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times display-4 text-muted mb-3"></i>
+                            <h5>No bookings found</h5>
+                            <p class="text-muted">No booking requests have been submitted yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hospitals Management Tab -->
+        <div class="tab-pane fade" id="hospitals" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Hospitals Overview</h5>
+                </div>
+                <div class="card-body">
+                    {% if hospitals %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Location</th>
+                                        <th>Rating</th>
+                                        <th>Success Rate</th>
+                                        <th>Fee</th>
+                                        <th>Available Beds</th>
+                                        <th>Contact</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for hospital in hospitals %}
+                                        <tr>
+                                            <td><strong>{{ hospital.id }}</strong></td>
+                                            <td>
+                                                <a href="{{ url_for('hospital_details', hospital_id=hospital.id) }}" 
+                                                   class="text-decoration-none">{{ hospital.name }}</a>
+                                            </td>
+                                            <td>{{ hospital.location }}</td>
+                                            <td>
+                                                <span class="badge bg-primary">
+                                                    <i class="fas fa-star me-1"></i>{{ hospital.doctor_rating }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">{{ hospital.success_rate }}%</span>
+                                            </td>
+                                            <td>${{ hospital.consultation_fee }}</td>
+                                            <td>
+                                                <small>
+                                                    ICU: {{ hospital.available_beds.get('ICU', 0) }}<br>
+                                                    General: {{ hospital.available_beds.get('General', 0) }}<br>
+                                                    Private: {{ hospital.available_beds.get('Private', 0) }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div>{{ hospital.phone }}</div>
+                                                <small class="text-muted">{{ hospital.email }}</small>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-hospital display-4 text-muted mb-3"></i>
+                            <h5>No hospitals found</h5>
+                            <p class="text-muted">No hospitals are registered in the system.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterBookings(status) {
+    const rows = document.querySelectorAll('.booking-row');
+    rows.forEach(row => {
+        if (status === 'all' || row.dataset.status === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // Update button states
+    document.querySelectorAll('.card-header button').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline-primary');
+    });
+    
+    event.target.classList.remove('btn-outline-primary');
+    event.target.classList.add('btn-primary');
+}
+</script>
+{% endblock %}

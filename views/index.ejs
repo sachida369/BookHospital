@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Find and book hospital beds online. Search hospitals by specialty, location, and availability. Fast, easy, and secure booking.">
+    <meta name="keywords" content="hospital booking, bed reservation, medical care, healthcare, hospital search">
+    <meta name="author" content="Hospital.com">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-hospital-alt me-2"></i>Hospital.com
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search">Search Hospitals</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <% if (locals.isAdmin) { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/dashboard">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/logout">
+                                <i class="fas fa-sign-out-alt me-1"></i>Logout
+                            </a>
+                        </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/login">
+                                <i class="fas fa-user-shield me-1"></i>Admin
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <% if (locals.message) { %>
+        <div class="container mt-3">
+            <div class="alert alert-<%= message.type === 'error' ? 'danger' : message.type %> alert-dismissible fade show" role="alert">
+                <i class="fas fa-<%= message.type === 'error' ? 'exclamation-triangle' : 'check-circle' %> me-2"></i>
+                <%= message.text %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    <% } %>
+
+    <!-- Main Content -->
+    <main id="main-content">
+
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Find & Book Hospital Beds Instantly</h1>
+                <p class="lead mb-4">Search through thousands of hospitals, compare facilities, and book beds online. Your health is our priority.</p>
+                <a href="/search" class="btn btn-light btn-lg">
+                    <i class="fas fa-search me-2"></i>Search Hospitals
+                </a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-hospital display-1 opacity-75"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Form -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-center mb-4">Quick Search</h3>
+                        <form action="/search" method="GET">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Hospital Name</label>
+                                    <input type="text" class="form-control" name="name" placeholder="Enter hospital name">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" name="location" placeholder="Enter city or area">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Disease Type</label>
+                                    <select class="form-select" name="diseaseType">
+                                        <option value="">Any Specialty</option>
+                                        <% diseaseTypes.forEach(disease => { %>
+                                            <option value="<%= disease %>"><%= disease %></option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Bed Type</label>
+                                    <select class="form-select" name="bedType">
+                                        <option value="">Any Type</option>
+                                        <% bedTypes.forEach(bedType => { %>
+                                            <option value="<%= bedType %>"><%= bedType %></option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Min Rating</label>
+                                    <select class="form-select" name="minRating">
+                                        <option value="">Any Rating</option>
+                                        <option value="4.5">4.5+ Stars</option>
+                                        <option value="4.0">4.0+ Stars</option>
+                                        <option value="3.5">3.5+ Stars</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 text-center">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                                        <i class="fas fa-search me-2"></i>Search Hospitals
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Hospitals -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Featured Hospitals</h2>
+        <div class="row g-4">
+            <% hospitals.forEach(hospital => { %>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow-sm hospital-card">
+                        <img src="<%= hospital.imageUrl %>" class="card-img-top" alt="<%= hospital.name %>" style="height: 200px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title"><%= hospital.name %></h5>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-map-marker-alt me-1"></i><%= hospital.location %>
+                            </p>
+                            <p class="card-text flex-grow-1"><%= hospital.description.substring(0, 100) %>...</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="badge bg-primary">
+                                        <i class="fas fa-star me-1"></i><%= hospital.doctorRating %>
+                                    </span>
+                                    <span class="badge bg-success"><%= hospital.successRate %>% Success</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">Fee: $<%= hospital.consultationFee %></small>
+                                    <small class="text-success">
+                                        <%= getTotalBeds(hospital.availableBeds) %> beds available
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="/hospital/<%= hospital.id %>" class="btn btn-outline-primary">
+                                    <i class="fas fa-info-circle me-1"></i>View Details
+                                </a>
+                                <a href="/book/<%= hospital.id %>" class="btn btn-primary">
+                                    <i class="fas fa-calendar-plus me-1"></i>Book Bed
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="/search" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-search me-2"></i>View All Hospitals
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose Hospital.com?</h2>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <i class="fas fa-search-location display-4 text-primary mb-3"></i>
+                        <h5>Easy Search</h5>
+                        <p class="text-muted">Find hospitals by location, specialty, and availability with our advanced search filters.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <i class="fas fa-clock display-4 text-primary mb-3"></i>
+                        <h5>24/7 Booking</h5>
+                        <p class="text-muted">Book hospital beds anytime, anywhere. Our platform is available round the clock.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt display-4 text-primary mb-3"></i>
+                        <h5>Secure & Safe</h5>
+                        <p class="text-muted">Your personal information is protected with enterprise-grade security measures.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <i class="fas fa-headset display-4 text-primary mb-3"></i>
+                        <h5>Expert Support</h5>
+                        <p class="text-muted">Get help from our medical experts and customer support team whenever you need it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-hospital-alt me-2"></i>Hospital.com
+                    </h5>
+                    <p class="mb-0">Your trusted platform for finding and booking hospital beds. Quality healthcare at your fingertips.</p>
+                </div>
+                
+                <div class="col-md-2 mb-4">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-light text-decoration-none">Home</a></li>
+                        <li><a href="/search" class="text-light text-decoration-none">Search</a></li>
+                        <li><a href="/about" class="text-light text-decoration-none">About</a></li>
+                        <li><a href="/contact" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <h6 class="fw-bold mb-3">Services</h6>
+                    <ul class="list-unstyled">
+                        <li>Hospital Search</li>
+                        <li>Bed Booking</li>
+                        <li>Emergency Care</li>
+                        <li>Specialist Consultation</li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <h6 class="fw-bold mb-3">Contact Info</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-phone me-2"></i>+1-555-HOSPITAL</li>
+                        <li><i class="fas fa-envelope me-2"></i>info@hospital.com</li>
+                        <li><i class="fas fa-clock me-2"></i>24/7 Support</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2025 Hospital.com. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-light me-3"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="/js/app.js"></script>
+</body>
+</html>

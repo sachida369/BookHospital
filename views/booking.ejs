@@ -1,0 +1,209 @@
+<div class="container py-4">
+    <div class="row">
+        <!-- Booking Form -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-plus me-2"></i>Book Bed at <%= hospital.name %>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/book/<%= hospital.id %>">
+                        <div class="row g-3">
+                            <!-- Patient Information -->
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-2 mb-3">Patient Information</h5>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name*</label>
+                                <input type="text" class="form-control <%= errors.patientName ? 'is-invalid' : '' %>" 
+                                       name="patientName" value="<%= formData.patientName || '' %>" required>
+                                <% if (errors.patientName) { %>
+                                    <div class="invalid-feedback"><%= errors.patientName %></div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Age*</label>
+                                <input type="number" class="form-control <%= errors.patientAge ? 'is-invalid' : '' %>" 
+                                       name="patientAge" value="<%= formData.patientAge || '' %>" min="0" max="150" required>
+                                <% if (errors.patientAge) { %>
+                                    <div class="invalid-feedback"><%= errors.patientAge %></div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number*</label>
+                                <input type="tel" class="form-control <%= errors.patientPhone ? 'is-invalid' : '' %>" 
+                                       name="patientPhone" value="<%= formData.patientPhone || '' %>" required>
+                                <% if (errors.patientPhone) { %>
+                                    <div class="invalid-feedback"><%= errors.patientPhone %></div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address*</label>
+                                <input type="email" class="form-control <%= errors.patientEmail ? 'is-invalid' : '' %>" 
+                                       name="patientEmail" value="<%= formData.patientEmail || '' %>" required>
+                                <% if (errors.patientEmail) { %>
+                                    <div class="invalid-feedback"><%= errors.patientEmail %></div>
+                                <% } %>
+                            </div>
+                            
+                            <!-- Medical Information -->
+                            <div class="col-12 mt-4">
+                                <h5 class="border-bottom pb-2 mb-3">Medical Information</h5>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Bed Type*</label>
+                                <select class="form-select <%= errors.bedType ? 'is-invalid' : '' %>" name="bedType" required>
+                                    <option value="">Select bed type</option>
+                                    <% Object.entries(hospital.availableBeds).forEach(([bedType, count]) => { %>
+                                        <% if (count > 0) { %>
+                                            <option value="<%= bedType %>" <%= formData.bedType === bedType ? 'selected' : '' %>>
+                                                <%= bedType %> (<%= count %> available)
+                                            </option>
+                                        <% } %>
+                                    <% }); %>
+                                </select>
+                                <% if (errors.bedType) { %>
+                                    <div class="invalid-feedback"><%= errors.bedType %></div>
+                                <% } %>
+                                <div class="form-text">
+                                    Available beds: 
+                                    <% Object.entries(hospital.availableBeds).forEach(([bedType, count], index) => { %>
+                                        <%= bedType %> (<%= count %>)<%= index < Object.keys(hospital.availableBeds).length - 1 ? ', ' : '' %>
+                                    <% }); %>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Disease/Condition*</label>
+                                <input type="text" class="form-control <%= errors.diseaseType ? 'is-invalid' : '' %>" 
+                                       name="diseaseType" value="<%= formData.diseaseType || '' %>" placeholder="e.g., Heart Surgery" required>
+                                <% if (errors.diseaseType) { %>
+                                    <div class="invalid-feedback"><%= errors.diseaseType %></div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Emergency Contact*</label>
+                                <input type="tel" class="form-control <%= errors.emergencyContact ? 'is-invalid' : '' %>" 
+                                       name="emergencyContact" value="<%= formData.emergencyContact || '' %>" required>
+                                <% if (errors.emergencyContact) { %>
+                                    <div class="invalid-feedback"><%= errors.emergencyContact %></div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Special Requirements</label>
+                                <textarea class="form-control <%= errors.specialRequirements ? 'is-invalid' : '' %>" 
+                                          name="specialRequirements" rows="3" placeholder="Any special medical requirements or notes..."><%= formData.specialRequirements || '' %></textarea>
+                                <% if (errors.specialRequirements) { %>
+                                    <div class="invalid-feedback"><%= errors.specialRequirements %></div>
+                                <% } %>
+                            </div>
+                            
+                            <!-- Terms and Conditions -->
+                            <div class="col-12 mt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                    <label class="form-check-label" for="termsCheck">
+                                        I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="/hospital/<%= hospital.id %>" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-check me-1"></i>Submit Booking Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Booking Summary Sidebar -->
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 2rem;">
+                <div class="card-header">
+                    <h5 class="mb-0">Booking Summary</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Hospital</h6>
+                    <p class="mb-3"><%= hospital.name %><br>
+                    <small class="text-muted"><%= hospital.location %></small></p>
+                    
+                    <h6>Available Bed Types</h6>
+                    <ul class="list-unstyled mb-3">
+                        <% Object.entries(hospital.availableBeds).forEach(([bedType, count]) => { %>
+                            <li class="d-flex justify-content-between">
+                                <span><%= bedType %></span>
+                                <span class="badge bg-<%= count > 5 ? 'success' : count > 0 ? 'warning' : 'danger' %>">
+                                    <%= count %> available
+                                </span>
+                            </li>
+                        <% }); %>
+                    </ul>
+                    
+                    <h6>Consultation Fee</h6>
+                    <p class="fs-5 text-primary fw-bold">$<%= hospital.consultationFee %></p>
+                    
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-info-circle me-1"></i>
+                            Your booking request will be processed within 30 minutes. You will receive a confirmation via email and SMS.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms and Conditions Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Booking Terms</h6>
+                <ul>
+                    <li>All booking requests are subject to bed availability and hospital approval.</li>
+                    <li>You will receive confirmation within 30 minutes of submission.</li>
+                    <li>Cancellation must be made at least 2 hours before the scheduled time.</li>
+                    <li>Emergency situations will be prioritized regardless of booking order.</li>
+                </ul>
+                
+                <h6>Payment Terms</h6>
+                <ul>
+                    <li>Consultation fees are due upon admission.</li>
+                    <li>Additional charges may apply based on treatment requirements.</li>
+                    <li>Insurance claims can be processed through the hospital's billing department.</li>
+                </ul>
+                
+                <h6>Privacy Policy</h6>
+                <ul>
+                    <li>Your personal and medical information will be kept confidential.</li>
+                    <li>Information may be shared with medical staff for treatment purposes only.</li>
+                    <li>We comply with all healthcare privacy regulations.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Agree</button>
+            </div>
+        </div>
+    </div>
+</div>

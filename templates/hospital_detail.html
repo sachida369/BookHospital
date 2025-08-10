@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Hospital Header -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+        <div class="md:flex">
+            <div class="md:w-1/2">
+                <img src="{{ hospital.image_url or 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=600&h=400&fit=crop' }}" 
+                     alt="{{ hospital.name }}" class="w-full h-64 md:h-full object-cover">
+            </div>
+            
+            <div class="md:w-1/2 p-8">
+                <div class="flex justify-between items-start mb-4">
+                    <h1 class="text-3xl font-bold text-gray-900">{{ hospital.name }}</h1>
+                    <div class="flex items-center">
+                        {% for i in range(5) %}
+                            <i class="fas fa-star {% if i < hospital.doctor_rating %}rating-stars{% else %}text-gray-300{% endif %}"></i>
+                        {% endfor %}
+                        <span class="text-lg text-gray-600 ml-2">{{ hospital.doctor_rating }}</span>
+                    </div>
+                </div>
+                
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-map-marker-alt mr-3 text-medical-blue"></i>
+                        <span>{{ hospital.address }}</span>
+                    </div>
+                    
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-phone mr-3 text-medical-blue"></i>
+                        <a href="tel:{{ hospital.phone }}" class="hover:text-medical-blue">{{ hospital.phone }}</a>
+                    </div>
+                    
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-envelope mr-3 text-medical-blue"></i>
+                        <a href="mailto:{{ hospital.email }}" class="hover:text-medical-blue">{{ hospital.email }}</a>
+                    </div>
+                    
+                    {% if hospital.website %}
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-globe mr-3 text-medical-blue"></i>
+                        <a href="http://{{ hospital.website }}" target="_blank" class="hover:text-medical-blue">{{ hospital.website }}</a>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="text-center p-3 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-medical-blue">{{ hospital.success_rate }}%</div>
+                        <div class="text-sm text-gray-600">Success Rate</div>
+                    </div>
+                    <div class="text-center p-3 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-medical-green">{{ hospital.total_beds() }}</div>
+                        <div class="text-sm text-gray-600">Available Beds</div>
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded-lg">
+                        <div class="text-2xl font-bold text-gray-900">${{ hospital.consultation_fee }}</div>
+                        <div class="text-sm text-gray-600">Consultation Fee</div>
+                    </div>
+                </div>
+                
+                <a href="{{ url_for('book_hospital', id=hospital.id) }}" 
+                   class="w-full bg-medical-blue text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-colors font-medium text-center block">
+                    <i class="fas fa-calendar-plus mr-2"></i>Book Bed Now
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="bg-white rounded-lg shadow-md">
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex">
+                <button class="tab-button active py-4 px-6 text-sm font-medium border-b-2 border-medical-blue text-medical-blue" 
+                        data-tab="overview">
+                    <i class="fas fa-info-circle mr-2"></i>Overview
+                </button>
+                <button class="tab-button py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" 
+                        data-tab="specialties">
+                    <i class="fas fa-stethoscope mr-2"></i>Specialties
+                </button>
+                <button class="tab-button py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" 
+                        data-tab="beds">
+                    <i class="fas fa-bed mr-2"></i>Bed Availability
+                </button>
+                <button class="tab-button py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" 
+                        data-tab="facilities">
+                    <i class="fas fa-hospital mr-2"></i>Facilities
+                </button>
+            </nav>
+        </div>
+        
+        <!-- Tab Content -->
+        <div class="p-8">
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overview">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">About {{ hospital.name }}</h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">{{ hospital.description }}</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3">Hospital Statistics</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Doctor Rating:</span>
+                                <span class="font-medium">{{ hospital.doctor_rating }}/5.0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Success Rate:</span>
+                                <span class="font-medium text-medical-green">{{ hospital.success_rate }}%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Total Beds:</span>
+                                <span class="font-medium">{{ hospital.total_beds() }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Consultation Fee:</span>
+                                <span class="font-medium text-medical-blue">${{ hospital.consultation_fee }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3">Quick Contact</h4>
+                        <div class="space-y-3">
+                            <a href="tel:{{ hospital.phone }}" 
+                               class="flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                                <i class="fas fa-phone text-medical-green mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-gray-900">Call Hospital</div>
+                                    <div class="text-sm text-gray-600">{{ hospital.phone }}</div>
+                                </div>
+                            </a>
+                            
+                            <div class="p-3 bg-red-50 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                                    <span class="font-medium text-red-900">Emergency</span>
+                                </div>
+                                <div class="text-sm text-red-700">For medical emergencies, call 911 or go directly to the emergency room.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Specialties Tab -->
+            <div class="tab-content" id="specialties">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Medical Specialties</h3>
+                <p class="text-gray-600 mb-6">Our hospital specializes in the following medical areas:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for specialty in hospital.get_specialties() %}
+                    <div class="flex items-center p-4 bg-blue-50 rounded-lg">
+                        <i class="fas fa-check-circle text-medical-blue mr-3"></i>
+                        <span class="font-medium text-gray-900">{{ specialty }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Bed Availability Tab -->
+            <div class="tab-content" id="beds">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Current Bed Availability</h3>
+                <p class="text-gray-600 mb-6">Real-time bed availability across different ward types:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {% for bed_type, count in available_beds.items() %}
+                    <div class="text-center p-6 border-2 {% if count > 5 %}border-green-200 bg-green-50{% elif count > 0 %}border-yellow-200 bg-yellow-50{% else %}border-red-200 bg-red-50{% endif %} rounded-lg">
+                        <i class="fas fa-bed text-4xl {% if count > 5 %}text-medical-green{% elif count > 0 %}text-yellow-600{% else %}text-red-500{% endif %} mb-4"></i>
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">{{ bed_type }} Ward</h4>
+                        <div class="text-3xl font-bold {% if count > 5 %}text-medical-green{% elif count > 0 %}text-yellow-600{% else %}text-red-500{% endif %} mb-2">
+                            {{ count }}
+                        </div>
+                        <div class="text-sm text-gray-600 mb-4">Available Beds</div>
+                        
+                        {% if count > 0 %}
+                            <a href="{{ url_for('book_hospital', id=hospital.id) }}" 
+                               class="inline-block bg-medical-blue text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm">
+                                Book Now
+                            </a>
+                        {% else %}
+                            <span class="inline-block bg-red-100 text-red-800 px-4 py-2 rounded-md text-sm">
+                                Fully Occupied
+                            </span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Facilities Tab -->
+            <div class="tab-content" id="facilities">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Hospital Facilities</h3>
+                <p class="text-gray-600 mb-6">Our hospital is equipped with modern facilities and equipment:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for facility in hospital.get_facilities() %}
+                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                        <i class="fas fa-hospital text-medical-blue mr-3"></i>
+                        <span class="font-medium text-gray-900">{{ facility }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Tab functionality
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.dataset.tab;
+            
+            // Remove active class from all buttons and content
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active', 'border-medical-blue', 'text-medical-blue');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Add active class to clicked button and corresponding content
+            this.classList.add('active', 'border-medical-blue', 'text-medical-blue');
+            this.classList.remove('border-transparent', 'text-gray-500');
+            
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+</script>
+
+<style>
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+</style>
+{% endblock %}

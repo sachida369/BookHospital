@@ -1,0 +1,226 @@
+<div class="container py-4">
+    <!-- Hospital Header -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <img src="<%= hospital.imageUrl %>" class="img-fluid rounded shadow" alt="<%= hospital.name %>" style="width: 100%; height: 300px; object-fit: cover;">
+        </div>
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h1 class="card-title h3"><%= hospital.name %></h1>
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-map-marker-alt me-2"></i><%= hospital.location %>
+                    </p>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge bg-primary fs-6">
+                                <i class="fas fa-star me-1"></i><%= hospital.doctorRating %> Rating
+                            </span>
+                            <span class="badge bg-success fs-6"><%= hospital.successRate %>% Success</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Consultation Fee</h6>
+                        <p class="fs-4 text-primary fw-bold mb-0">$<%= hospital.consultationFee %></p>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="/book/<%= hospital.id %>" class="btn btn-primary btn-lg">
+                            <i class="fas fa-calendar-plus me-2"></i>Book Bed Now
+                        </a>
+                        <a href="tel:<%= hospital.phone %>" class="btn btn-outline-primary">
+                            <i class="fas fa-phone me-2"></i>Call Hospital
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hospital Information Tabs -->
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="hospitalTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                        <i class="fas fa-info-circle me-1"></i>Overview
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="specialties-tab" data-bs-toggle="tab" data-bs-target="#specialties" type="button" role="tab">
+                        <i class="fas fa-stethoscope me-1"></i>Specialties
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="beds-tab" data-bs-toggle="tab" data-bs-target="#beds" type="button" role="tab">
+                        <i class="fas fa-bed me-1"></i>Bed Availability
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="facilities-tab" data-bs-toggle="tab" data-bs-target="#facilities" type="button" role="tab">
+                        <i class="fas fa-hospital me-1"></i>Facilities
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab">
+                        <i class="fas fa-phone me-1"></i>Contact
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content mt-4" id="hospitalTabsContent">
+                <!-- Overview Tab -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">About <%= hospital.name %></h5>
+                            <p class="card-text"><%= hospital.description %></p>
+                            
+                            <div class="row g-4 mt-3">
+                                <div class="col-md-4 text-center">
+                                    <div class="border rounded p-3">
+                                        <i class="fas fa-star display-6 text-primary mb-2"></i>
+                                        <h6>Doctor Rating</h6>
+                                        <p class="mb-0 fw-bold"><%= hospital.doctorRating %>/5.0</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="border rounded p-3">
+                                        <i class="fas fa-chart-line display-6 text-success mb-2"></i>
+                                        <h6>Success Rate</h6>
+                                        <p class="mb-0 fw-bold"><%= hospital.successRate %>%</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="border rounded p-3">
+                                        <i class="fas fa-dollar-sign display-6 text-info mb-2"></i>
+                                        <h6>Consultation Fee</h6>
+                                        <p class="mb-0 fw-bold">$<%= hospital.consultationFee %></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Specialties Tab -->
+                <div class="tab-pane fade" id="specialties" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Medical Specialties</h5>
+                            <p class="text-muted mb-4">Our hospital specializes in the following medical areas:</p>
+                            
+                            <div class="row g-3">
+                                <% hospital.diseaseTypes.forEach(specialty => { %>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="d-flex align-items-center p-3 border rounded">
+                                            <i class="fas fa-check-circle text-success me-3"></i>
+                                            <span><%= specialty %></span>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bed Availability Tab -->
+                <div class="tab-pane fade" id="beds" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Current Bed Availability</h5>
+                            <p class="text-muted mb-4">Real-time bed availability across different ward types:</p>
+                            
+                            <div class="row g-4">
+                                <% Object.entries(hospital.availableBeds).forEach(([bedType, count]) => { %>
+                                    <div class="col-md-4">
+                                        <div class="card border-<%= count > 10 ? 'success' : count > 5 ? 'warning' : 'danger' %>">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-bed display-6 text-<%= count > 10 ? 'success' : count > 5 ? 'warning' : 'danger' %> mb-3"></i>
+                                                <h5><%= bedType %> Ward</h5>
+                                                <h3 class="text-<%= count > 10 ? 'success' : count > 5 ? 'warning' : 'danger' %>"><%= count %></h3>
+                                                <p class="mb-0">Available Beds</p>
+                                                <% if (count > 0) { %>
+                                                    <a href="/book/<%= hospital.id %>" class="btn btn-sm btn-primary mt-2">Book Now</a>
+                                                <% } else { %>
+                                                    <span class="badge bg-danger mt-2">Fully Occupied</span>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Facilities Tab -->
+                <div class="tab-pane fade" id="facilities" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Hospital Facilities</h5>
+                            <p class="text-muted mb-4">Our hospital is equipped with modern facilities and equipment:</p>
+                            
+                            <div class="row g-3">
+                                <% hospital.facilities.forEach(facility => { %>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="d-flex align-items-center p-3 border rounded">
+                                            <i class="fas fa-hospital text-primary me-3"></i>
+                                            <span><%= facility %></span>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Tab -->
+                <div class="tab-pane fade" id="contact" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Contact Information</h5>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-map-marker-alt text-primary me-2"></i>Address</h6>
+                                    <p><%= hospital.address %></p>
+                                    
+                                    <h6><i class="fas fa-phone text-primary me-2"></i>Phone</h6>
+                                    <p>
+                                        <a href="tel:<%= hospital.phone %>" class="text-decoration-none"><%= hospital.phone %></a>
+                                    </p>
+                                    
+                                    <h6><i class="fas fa-envelope text-primary me-2"></i>Email</h6>
+                                    <p>
+                                        <a href="mailto:<%= hospital.email %>" class="text-decoration-none"><%= hospital.email %></a>
+                                    </p>
+                                    
+                                    <% if (hospital.website) { %>
+                                        <h6><i class="fas fa-globe text-primary me-2"></i>Website</h6>
+                                        <p>
+                                            <a href="http://<%= hospital.website %>" target="_blank" class="text-decoration-none"><%= hospital.website %></a>
+                                        </p>
+                                    <% } %>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6>Emergency Contact</h6>
+                                            <p class="mb-2">For medical emergencies, call:</p>
+                                            <h4 class="text-danger"><%= hospital.phone %></h4>
+                                            <small class="text-muted">Available 24/7</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,214 @@
+<div class="container-fluid py-4">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+        <a href="/admin/logout" class="btn btn-outline-danger">
+            <i class="fas fa-sign-out-alt me-1"></i>Logout
+        </a>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-5">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4><%= stats.totalHospitals %></h4>
+                            <p class="mb-0">Total Hospitals</p>
+                        </div>
+                        <i class="fas fa-hospital display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4><%= stats.totalBookings %></h4>
+                            <p class="mb-0">Total Bookings</p>
+                        </div>
+                        <i class="fas fa-calendar-check display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4><%= stats.pendingBookings %></h4>
+                            <p class="mb-0">Pending Bookings</p>
+                        </div>
+                        <i class="fas fa-clock display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bookings Management -->
+    <div class="card mb-5">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Recent Bookings</h5>
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-primary" data-filter="all">All</button>
+                <button type="button" class="btn btn-outline-primary" data-filter="pending">Pending</button>
+                <button type="button" class="btn btn-outline-primary" data-filter="confirmed">Confirmed</button>
+                <button type="button" class="btn btn-outline-primary" data-filter="cancelled">Cancelled</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <% if (bookings.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient</th>
+                                <th>Hospital</th>
+                                <th>Bed Type</th>
+                                <th>Disease/Condition</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% bookings.forEach(booking => { %>
+                                <% const hospital = hospitals.find(h => h.id === booking.hospitalId); %>
+                                <tr class="booking-row" data-status="<%= booking.status %>">
+                                    <td><strong>#<%= booking.id %></strong></td>
+                                    <td>
+                                        <div><%= booking.patientName %></div>
+                                        <small class="text-muted">Age: <%= booking.patientAge %></small>
+                                    </td>
+                                    <td>
+                                        <%= hospital ? hospital.name : 'Unknown' %>
+                                        <br><small class="text-muted"><%= booking.patientPhone %></small>
+                                    </td>
+                                    <td><span class="badge bg-info"><%= booking.bedType %></span></td>
+                                    <td><%= booking.diseaseType %></td>
+                                    <td>
+                                        <%= new Date(booking.bookingDate).toLocaleDateString() %>
+                                        <br><small class="text-muted"><%= new Date(booking.bookingDate).toLocaleTimeString() %></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-<%= booking.status === 'confirmed' ? 'success' : booking.status === 'cancelled' ? 'danger' : 'warning' %>">
+                                            <%= booking.status.charAt(0).toUpperCase() + booking.status.slice(1) %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <% if (booking.status === 'pending') { %>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="/admin/booking/<%= booking.id %>/confirmed" class="btn btn-success btn-sm" 
+                                                   data-confirm="Are you sure you want to confirm this booking?">
+                                                    <i class="fas fa-check"></i>
+                                                </a>
+                                                <a href="/admin/booking/<%= booking.id %>/cancelled" class="btn btn-danger btn-sm"
+                                                   data-confirm="Are you sure you want to cancel this booking?">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            </div>
+                                        <% } else { %>
+                                            <small class="text-muted">No actions</small>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times display-4 text-muted mb-3"></i>
+                    <h5>No bookings found</h5>
+                    <p class="text-muted">No booking requests have been submitted yet.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    
+    <!-- Hospitals Overview -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-hospital me-2"></i>Hospitals Overview</h5>
+        </div>
+        <div class="card-body">
+            <% if (hospitals.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Hospital Name</th>
+                                <th>Location</th>
+                                <th>Rating</th>
+                                <th>Success Rate</th>
+                                <th>Fee</th>
+                                <th>Available Beds</th>
+                                <th>Contact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% hospitals.forEach(hospital => { %>
+                                <tr>
+                                    <td><strong><%= hospital.id %></strong></td>
+                                    <td>
+                                        <a href="/hospital/<%= hospital.id %>" class="text-decoration-none"><%= hospital.name %></a>
+                                    </td>
+                                    <td><%= hospital.location %></td>
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            <i class="fas fa-star me-1"></i><%= hospital.doctorRating %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success"><%= hospital.successRate %>%</span>
+                                    </td>
+                                    <td>$<%= hospital.consultationFee %></td>
+                                    <td>
+                                        <small>
+                                            <% Object.entries(hospital.availableBeds).forEach(([bedType, count], index) => { %>
+                                                <%= bedType %>: <%= count %><%= index < Object.keys(hospital.availableBeds).length - 1 ? '<br>' : '' %>
+                                            <% }); %>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div><%= hospital.phone %></div>
+                                        <small class="text-muted"><%= hospital.email %></small>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <i class="fas fa-hospital display-4 text-muted mb-3"></i>
+                    <h5>No hospitals found</h5>
+                    <p class="text-muted">No hospitals are registered in the system.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- Include filter script -->
+<script>
+function filterBookings(status) {
+    const rows = document.querySelectorAll('.booking-row');
+    rows.forEach(row => {
+        if (status === 'all' || row.dataset.status === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+</script>
